@@ -40,16 +40,16 @@ def TUAN_ACTIVEID():
         else:
             msg += "程序没有找到设置京喜工厂团的变量值，将自动添加进配置"
             export =  f"export TUAN_ACTIVEID={TUAN_ACTIVEID} # 京喜工厂团ID\n"
-            with open(f"{env}/config/config.sh", 'r', encoding='utf-8') as f3:
-                configs = f3.readlines()
-            if env == '/jd':
+            if 'jd' in env:
+                with open(f"{env}/config/config.sh", 'r', encoding='utf-8') as f3:
+                    configs = f3.readlines()
                 for config in configs:
-                    if config.find("第五区域") != -1 and config.find("↑") != -1:
-                        line = configs.index(config)
-                        configs.insert(line - 1, export)
-                        configs = ''.join(configs)
+                    if config.find("第五区域") != -1 and config.find("↓") != -1:
+                        end_line = configs.index(config)
                         break
-            else:
+                configs.insert(end_line + 4, export)
+                configs = ''.join(configs)
+            elif 'ql' in env:
                 configs += export
         with open(f"{env}/config/config.sh", 'w', encoding='utf-8') as f2:
             f2.write(configs)
@@ -129,11 +129,8 @@ if __name__ == '__main__':
         isv4 = True
         if not os.path.isfile(f'{env}/config/config.sh'):  # v4-bot 容器内
             env = '/jd'
-    bot = f'{env}/config/bot.json'
-    with open(bot, 'r', encoding='utf-8') as botSet:
-        bot = json.load(botSet)
     cron = '此处填写' # 此处 V4 用户需要自行设置 cron 表达式，否则程序自动设置为 jd_dreamFactory.js 的运行时间
-    if env == '/jd':
+    if 'jd' in env:
         if len(cron) < 9:
             cron = findCrontab()
         if not cron:
@@ -141,4 +138,10 @@ if __name__ == '__main__':
         checkCrontab()
     msg = TUAN_ACTIVEID()
     print(msg)
-    tgNofity(bot['user_id'], bot['bot_token'], msg)
+    try:
+        bot = f'{env}/config/bot.json'
+        with open(bot, 'r', encoding='utf-8') as botSet:
+            bot = json.load(botSet)
+        tgNofity(bot['user_id'], bot['bot_token'], msg)
+    except:
+        None
