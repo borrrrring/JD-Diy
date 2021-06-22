@@ -9,7 +9,6 @@
 
 from .. import chat_id, jdbot, logger, _JdbotDir
 from ..bot.utils import press_event, V4, QL, split_list, row, backfile, mybot
-from ..diy.utils import upuser
 from telethon import events, Button
 from asyncio import exceptions
 import requests, re, os, asyncio
@@ -21,13 +20,14 @@ async def myupbot(event):
         SENDER = event.sender_id
         furl_startswith = "https://raw.githubusercontent.com/chiupam/JD_Diy/master/jbot/"
         mydiy = {
+            "bot.py": "更新bot",
             "checkcookie.py": "检查过期",
-            "upbot.py": "升级upbot指令",
+            "upbot.py": "upbot指令",
             "download.py": "下载文件",
             "addrepo.py": "添加仓库",
             "addexport.py": "添加变量",
             "editexport.py": "修改变量",
-            "user.py": "更新user文件"
+            "user.py": "更新user"
         }
         btns = []
         dirs = os.listdir(f"{_JdbotDir}/diy")
@@ -45,6 +45,7 @@ async def myupbot(event):
                 conv.cancel()
                 return
             elif fname == 'user.py':
+                from ..diy.bot import upuser
                 await upuser(fname, msg)
             elif fname == 'all':
                 await jdbot.edit_message(msg, "准备自动升级并重启，请耐心等待")
@@ -61,11 +62,13 @@ async def myupbot(event):
         except Exception as e:
             await jdbot.send_message(chat_id, f"下载{fname}失败，请自行拉取文件进/jbot/diy目录")
             return
+        msg = await jdbot.edit_message(msg, f"下载{fname}成功")
         path = f"{_JdbotDir}/diy/{fname}"
         backfile(path)
         with open(path, 'w+', encoding='utf-8') as f:
             f.write(resp)
-            await jdbot.edit_message(msg, f"下载{fname}成功，正在自动重启")
+        from ..diy.bot import restart
+        await restart()
     except exceptions.TimeoutError:
         msg = await jdbot.edit_message(msg, '选择已超时，对话已停止，感谢你的使用')
     except Exception as e:
