@@ -70,13 +70,15 @@ else
 fi
 # user.py的抉择
 if [ ! -f "$user_file" ]; then
-  cp -rf $repo_2/beta/. $dir_diy
+  cp -rf $repo_2/jbot/. $dir_diy
   rm -rf $dir_diy/user.py
 else
-  cp -rf $repo_2/beta/. $dir_diy
+  cp -rf $repo_2/jbot/. $dir_diy
 fi
 # 修改启动语文件
 mv -f $repo_2/backup/__main__.py $dir_bot
+# 删除 bot.py
+rm -f $dir_root/jbot/diy/bot.py
 # diybotset.json的抉择
 if [ ! -f "$set_2" ]; then
   cp $repo_2/config/diybotset.json $dir_config
