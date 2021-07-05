@@ -121,6 +121,23 @@ async def shopbean(event):
         await jdbot.send_message(chat_id, info)
 
 
+@client.on(events.NewMessage(chats=[-1001419355450, my_chat_id]))
+async def zoo_shopbean(event):
+    cookies = myck(_ConfigFile)
+    # message = event.message.text
+    url = re.findall(re.compile(r"[(](https://api\.m\.jd\.com.*?)[)]", re.S), message)
+    if url != [] and len(cookies) > 0:
+        i = 0
+        info = '关注店铺\n' + "\n"
+        for cookie in cookies:
+            try:
+                i += 1
+                info += getbean(i, cookie, url[0])
+            except:
+                continue
+        await jdbot.send_message(chat_id, info)
+
+
 @client.on(events.NewMessage(chats=[-1001169232926, my_chat_id], pattern=r".*=\".*\"|.*='.*'"))
 async def myexport(event):
     try:
