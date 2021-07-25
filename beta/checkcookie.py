@@ -4,7 +4,7 @@
 
 from .. import chat_id, jdbot, logger, chname, mybot
 from ..bot.utils import press_event, V4, QL, _ConfigFile, myck, _Auth
-from ..diy.utils import QL2, QL8, ql_token, bot_id
+from ..diy.utils import QL2, QL8, ql_token
 from telethon import events
 from asyncio import exceptions
 import requests, re, asyncio, time, sys, os
@@ -31,7 +31,7 @@ async def checkCookie(cookie):
 
 
 # @jdbot.on(events.NewMessage(from_users=[chat_id, bot_id], pattern=r'^/checkcookie$|.*cookie已失效'))
-@jdbot.on(events.NewMessage(from_users=[chat_id, bot_id], pattern=r'^/checkcookie$'))
+@jdbot.on(events.NewMessage(from_users=[chat_id], pattern=r'^/checkcookie$'))
 async def mycheckcookie(event):
     try:
         msg = await jdbot.send_message(chat_id, "正在检测 cookie 过期情况……")
