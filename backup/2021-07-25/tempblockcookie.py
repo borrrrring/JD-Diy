@@ -6,7 +6,7 @@ from .. import chat_id, jdbot, logger, chname, mybot
 from ..bot.utils import press_event, V4, QL, _ConfigFile, row, split_list, _Auth, myck
 from telethon import events, Button
 from asyncio import exceptions
-import re, json, requests, time, sys, os
+import re, json, requests, time
 
 
 @jdbot.on(events.NewMessage(from_users=chat_id, pattern=r'^/blockcookie'))
@@ -30,11 +30,8 @@ async def mytempblockcookie(event):
         elif not ck_num.replace(" ", "").isdigit():
             await jdbot.send_message(chat_id, "非法输入！参考下面所给实例进行操作！\n/blockcookie 1（屏蔽账号1）")
     except Exception as e:
-        title = "【💥错误💥】"
-        name = sys.argv[0].split("/")[-1].split(".")[0]
-        function = sys._getframe().f_code.co_name
-        await jdbot.send_message(chat_id, f"{title}\n\n文件名：{name}\n函数名：{function}\n错误原因：{str(e)}\n\n建议百度/谷歌查询")
-        logger.error(f"错误--->{str(e)}")
+        await jdbot.send_message(chat_id, 'something wrong,I\'m sorry\n' + str(e))
+        logger.error('something wrong,I\'m sorry\n' + str(e))
 
 
 async def v4_block(sender):
@@ -142,13 +139,8 @@ async def v4_block(sender):
     except exceptions.TimeoutError:
         await jdbot.edit_message(msg, '选择已超时，对话已停止，感谢你的使用')
     except Exception as e:
-        title = "【💥错误💥】"
-        name = "文件名：" + os.path.split(__file__)[-1].split(".")[0]
-        function = "函数名：" + sys._getframe().f_code.co_name
-        tip = '建议百度/谷歌进行查询'
-        await jdbot.send_message(chat_id, f"{title}\n\n{name}\n{function}\n错误原因：{str(e)}\n\n{tip}")
-        logger.error(f"错误--->{str(e)}")
-        return False
+        await jdbot.send_message(chat_id, 'something wrong,I\'m sorry\n' + str(e))
+        logger.error('something wrong,I\'m sorry\n' + str(e))
 
 
 async def ql_block(sender):
@@ -298,12 +290,8 @@ async def ql_block(sender):
     except exceptions.TimeoutError:
         await jdbot.edit_message(msg, '选择已超时，对话已停止，感谢你的使用')
     except Exception as e:
-        title = "【💥错误💥】"
-        name = "文件名：" + os.path.split(__file__)[-1].split(".")[0]
-        function = "函数名：" + sys._getframe().f_code.co_name
-        tip = '建议百度/谷歌进行查询'
-        await jdbot.send_message(chat_id, f"{title}\n\n{name}\n{function}\n错误原因：{str(e)}\n\n{tip}")
-        logger.error(f"错误--->{str(e)}")
+        await jdbot.send_message(chat_id, 'something wrong,I\'m sorry\n' + str(e))
+        logger.error('something wrong,I\'m sorry\n' + str(e))
         return False
 
 
