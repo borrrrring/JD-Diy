@@ -2,11 +2,20 @@
 # -*- coding: utf-8 -*-
 
 
-from .. import chat_id, jdbot, logger, api_id, api_hash, proxystart, proxy, _ConfigDir, _ScriptsDir, _JdbotDir, _JdDir, TOKEN
-from ..bot.utils import cmd, backfile, jdcmd, V4, QL, _ConfigFile, myck
-from ..diy.utils import getbean, my_chat_id, myzdjr_chatIds, myjoinTeam_chatIds, shoptokenIds
+import asyncio
+import datetime
+import os
+import re
+import sys
+import time
+import requests
+
 from telethon import events, TelegramClient
-import re, asyncio, time, datetime, os, sys, requests, json
+
+from .. import chat_id, jdbot, logger, api_id, api_hash, proxystart, proxy, _ConfigDir, _JdDir, TOKEN
+from ..bot.utils import cmd, V4, QL, _ConfigFile, myck
+from ..diy.utils import getbean, my_chat_id, myzdjr_chatIds, shoptokenIds
+from ..diy.utils import getvenderId, getvenderName, getActivityInfo, signCollectGift, checkShopToken
 
 bot_id = int(TOKEN.split(":")[0])
 
@@ -188,6 +197,96 @@ async def myshoptoken(event):
         tip = '建议百度/谷歌进行查询'
         await jdbot.send_message(chat_id, f"{title}\n\n{name}\n{function}\n错误原因：{str(e)}\n\n{tip}")
         logger.error(f"错误--->{str(e)}")
+
+
+# @client.on(events.NewMessage(chats=shoptokenIds, pattern=r'(export\s)?MyShopToken\d*=(".*"|\'.*\')'))
+# async def myshoptoken(event):
+#     try:
+#         with open(f"{_ConfigDir}/config.sh", 'r', encoding='utf-8') as f1:
+#             configs = f1.read()
+#         exports = re.findall(r'export MyShopToken(\d+)="(.*)"', configs)
+#         if not exports:
+#             change = ""
+#             msg = await jdbot.send_message(chat_id, '监控到店铺签到环境变量，直接添加！')
+#             for message in event.message.text.split("\n"):
+#                 value = re.findall(r'"([^"]*)"', message)[0]
+#                 if V4:
+#                     configs = configs.split("\n")
+#                     for config in configs:
+#                         if "第五区域" in config and "↑" in config:
+#                             line = configs.index(config)
+#                             break
+#                     change += f'export MyShopToken1="{value}"\n'
+#                     configs.insert(line - 2, f'export MyShopToken1="{value}"\n')
+#                     configs = "".join(configs)
+#                 elif QL:
+#                     change += f'export MyShopToken1="{value}"\n'
+#                     configs += f'export MyShopToken1="{value}"\n'
+#             with open(f"{_ConfigDir}/config.sh", 'w', encoding='utf-8') as f2:
+#                 f2.write(configs)
+#             await jdbot.edit_message(msg, f"【店铺签到领京豆】\n\n此次添加的变量\n{change}")
+#             return
+#         msg = await jdbot.send_message(chat_id, '监控到店铺签到环境变量，首先清理过期店铺……')
+#         change = ""
+#         charts = await checkShopToken(exports, msg)
+#         if charts:
+#             configs = configs.split("\n")
+#             for chart in charts:
+#                 configs.remove(chart)
+#             with open(f"{_ConfigDir}/config.sh", 'w', encoding='utf-8') as f2:
+#                 f2.write("\n".join(configs))
+#             with open(f"{_ConfigDir}/config.sh", 'r', encoding='utf-8') as f3:
+#                 configs = f3.read()
+#             tokens = re.findall(r'export MyShopToken\d+="(.*)"', configs)
+#             i = 0
+#             configs = configs.split("\n")
+#             for config in configs:
+#                 if tokens[i] in config:
+#                     line = configs.index(config)
+#                     configs[line] = f'export MyShopToken{i + 1}="{tokens[i]}"'
+#                     i += 1
+#                     if i >= len(tokens):
+#                         break
+#             with open(f"{_ConfigDir}/config.sh", 'w', encoding='utf-8') as f4:
+#                 f4.write("\n".join(configs))
+#         for message in event.message.text.split("\n"):
+#             value = re.findall(r'"([^"]*)"', message)[0]
+#             with open(f"{_ConfigDir}/config.sh", 'r', encoding='utf-8') as f2:
+#                 configs = f2.read()
+#             if value in configs:
+#                 continue
+#             with open(f"{_ConfigDir}/config.sh", 'r', encoding='utf-8') as f3:
+#                 configs = f3.readlines()
+#             for config in configs:
+#                 if "export MyShopToken" in config:
+#                     number = int(re.findall(r'\d+', config.split("=")[0])[0]) + 1
+#                     line = configs.index(config) + 1
+#                     change += f'export MyShopToken{number}="{value}"\n'
+#                     cookies = myck(_ConfigFile)
+#                     for cookie in cookies:
+#                         try:
+#                             venderId = getvenderId(value)
+#                             shopName, nameinfo = getvenderName(venderId)
+#                             change += nameinfo
+#                             activityId, endday, actinfo = getActivityInfo(value, venderId)
+#                             signinfo = signCollectGift(value, activityId, cookie)
+#                             change += signinfo
+#                         except:
+#                             continue
+#             configs.insert(line, f'export MyShopToken{number}="{value}"\n')
+#         with open(f"{_ConfigDir}/config.sh", 'w', encoding='utf-8') as f4:
+#             f4.write("\n".join(configs))
+#         if len(change) == 0:
+#             await jdbot.edit_message(msg, "目前配置中的环境变量无需改动")
+#             return
+#         await jdbot.edit_message(msg, f"【店铺签到领京豆】\n\n此次添加的变量\n{change}")
+#     except Exception as e:
+#         title = "【💥错误💥】"
+#         name = "文件名：" + os.path.split(__file__)[-1].split(".")[0]
+#         function = "函数名：" + sys._getframe().f_code.co_name
+#         tip = '建议百度/谷歌进行查询'
+#         await jdbot.send_message(chat_id, f"{title}\n\n{name}\n{function}\n错误原因：{str(e)}\n\n{tip}")
+#         logger.error(f"错误--->{str(e)}")
 
 
 @client.on(events.NewMessage(chats=myzdjr_chatIds, pattern=r'export\s(jd_zdjr_activity|jd_joinTeam_activity).*=(".*"|\'.*\')'))
