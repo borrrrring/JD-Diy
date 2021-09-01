@@ -41,9 +41,9 @@ async def myaddwskey(event):
                     msg = await jdbot.edit_message(msg, f'你的选择是：存储在{res}中\n准备继续工作……')
             if os.path.exists(file):
                 for message in messages:
-                    pin = re.findall(r'pin=(.*);', message)[0]
-                    key = re.findall(r'wskey=(.*);', message)[0]
-                    message = f"pin={pin};wskey={key};"
+                    ws = re.findall(r'(pin=.*)(wskey=[^;]*);*', message)[0]
+                    pin, key = ws[0], ws[1]
+                    message = pin + key
                     configs = wskey("str")
                     if pin in configs:
                         configs = re.sub(f"pin={pin};wskey=.*;", message, configs)
@@ -54,9 +54,9 @@ async def myaddwskey(event):
                     wskey(configs)
             else:
                 for message in messages:
-                    pin = re.findall(r'pin=(.*);', message)[0]
-                    key = re.findall(r'wskey=(.*);', message)[0]
-                    message = f"pin={pin};wskey={key};"
+                    ws = re.findall(r'(pin=.*)(wskey=[^;]*);*', message)[0]
+                    pin, key = ws[0], ws[1]
+                    message = pin + key
                     configs = read("str")
                     if pin + ";wskey" in configs:
                         configs = re.sub(f'pin={pin};wskey=.*;', message, configs)
@@ -82,9 +82,9 @@ async def myaddwskey(event):
         elif QL8:
             token = ql_token(_Auth)
             for message in messages:
-                pin = re.findall(r'pin=(.*);', message)[0]
-                key = re.findall(r'wskey=(.*);', message)[0]
-                message = f"pin={pin};wskey={key};"
+                ws = re.findall(r'(pin=.*)(wskey=[^;]*);*', message)[0]
+                pin, key = ws[0], ws[1]
+                message = pin + key
                 url = 'http://127.0.0.1:5600/api/envs'
                 headers = {'Authorization': f'Bearer {token}'}
                 body = {
