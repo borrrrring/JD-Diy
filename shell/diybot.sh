@@ -126,7 +126,7 @@ copy() {
 start() {
   if [ -z $(grep -E "123456789" $jbot_botset) ]
     then if [ -d "/jd" ]
-      then cd $diybot_diy
+      then cd $diybot_diy/jbot
         pm2 start ecosystem.config.js
         cd $root
         pm2 restart jbot
