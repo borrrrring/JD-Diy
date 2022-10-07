@@ -6,7 +6,7 @@ else
   root=/ql
 fi
 
-diybot_url="https://github.com/chiupam/JD_Diy.git"
+diybot_url="https://github.com/borrrrring/JD_Diy.git"
 jbot_botset=$root/config/bot.json
 diybot_repo=$root/repo/diybot
 diybot_diy=$root/jbot/diy
@@ -126,7 +126,7 @@ copy() {
 start() {
   if [ -z $(grep -E "123456789" $jbot_botset) ]
     then if [ -d "/jd" ]
-      then cd $dir_jbot
+      then cd $diybot_diy
         pm2 start ecosystem.config.js
         cd $root
         pm2 restart jbot
